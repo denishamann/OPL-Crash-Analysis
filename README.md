@@ -84,7 +84,7 @@ Nous avons eu deux idées :
 - comparer plusieurs algo de bucketing pour déterminer lequel est le plus efficace
 
 Nous avons choisi le premier car le second nous semblait difficilement réalisable dans le temps imparti (il n'en est pas moins interressant pour autant!)
-
+###Justification des données
 #### Comment avont nous récupéré les buckets
 
 Le mot clef bucket n'est jamais mentionné dans la doc mozilla.Néanmoins il existe une valeur similaire appelé signature.
@@ -98,6 +98,31 @@ Elle est utilisé par la fondation mozilla pour caractériser un crash report et
 ####Comment a-t-on récupéré l'ensemble des signatures des crashs
 via l'api SuperSearch ; plus précisément via cette requète :
     https://crash-stats.mozilla.com/api/SuperSearch/?product=Firefox&_facets=signature
+    à laquelle nous avons ajouté les arguments :
+- &version= < version voulu> 
+- &_results_offset= < offset> & _results_number=1000 pour itérer sur l'ensemble des résultats par tranche de 1000
+
+### Ce que l'on en tire
+
+#### Le résultat Brut
+![Résultat analyse](http://nsa37.casimages.com/img/2016/11/14/161114112419160221.jpg)
+
+Ce tableau est le résultat de notre analyse .
+
+- Il est indicé par version de firefox
+- chaque case contient 3 valeurs (dans l'ordre)
+    - le nombre de buckets ayant  disparus
+    - le nombre de buckets ayant  été introduits
+    - le nombre de buckets restants entre deux versions
+    
+Pour chaque comparaison , un fichier donnant le détail des buckets est disponible.
+
+#### Extrapolation des données
+Les résultats sont étranges.Les nombres de buckets sont très proches. cela peut être du à une erreur ,mais en reprennant les buckets un par un a la main , les résultats semblait corrects.
+
+
+  
+
 ## Limitations
 
 - vitesse (requêtes) du script d'extraction 
@@ -109,8 +134,6 @@ via l'api SuperSearch ; plus précisément via cette requète :
 
 ## Conclusion
 
-
-dire que les objectifs de base est atteint et les objectifs secondaires qu'on a ciblés sont aussi atteint. Que ça répond à l'attente.
 
 ## Glossaire
 - Bucket :
