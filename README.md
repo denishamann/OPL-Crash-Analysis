@@ -11,8 +11,7 @@ Denis Hamann - Nathan Baquet
 **[Travail technique](#travail-technique)**  
 **[Evaluation](#evaluation)**  
 **[Limitation](#limitation)**  
-**[Conclusion](#conclusion)**  
-**[Glossaire](#glossaire)**
+
 
 ## Introduction
 Le but premier de ce projet est de développer un outil qui permet de récupérer des rapports de crash de Mozilla Firefox afin de récolter au moins 20 000 rapports sur les deux dernières version de Firefox.
@@ -118,7 +117,9 @@ Ce tableau est le résultat de notre analyse .
 Pour chaque comparaison , un fichier donnant le détail des buckets est disponible.
 
 #### Extrapolation des données
-Les résultats sont étranges.Les nombres de buckets sont très proches. cela peut être du à une erreur ,mais en reprennant les buckets un par un a la main , les résultats semblait corrects.
+Les résultats sont étranges.Les nombres de buckets sont très proches.Cela peut être du à une erreur ,mais en reprennant les buckets un par un a la main , les résultats semblaient corrects.
+Le but à la base était de tirer des comportements généraux de ces données en comparant versions majeur et mineur , majeurs et majeur.... 
+Mais avec ces résultats là impossible.
 
 
   
@@ -132,9 +133,3 @@ Les résultats sont étranges.Les nombres de buckets sont très proches. cela pe
 - Bien qu'ayant des résultats cohérents pour l'algo d'analyse dans le rapports .Les stats version par version sont étranges -> problème dans la requête?ou alors mozilla change régulièrement ses buckets
  
 
-## Conclusion
-
-
-## Glossaire
-- Bucket :
-- Crawler :
