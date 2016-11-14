@@ -76,12 +76,14 @@ Voici un exemple de résultat au lancement du script d'analyse
 ![Résultat analyse](http://nsa37.casimages.com/img/2016/11/14/161114112419160221.jpg)
 
 ## Evaluation
-Dans un premier temps nous devions
-parler beaucoup ici de pourquoi on a décidé d'analyser ces données-là, dans quel but, pour qui (les dév mozz) ?
-commenter ici (du mieux qu'on peut) pourquoi c'est un bon algo de bucketing et pourquoi pas la comparer avec un autre (montrer qu'on a cherché d'autres algo de bucketing).
-pourquoi est-ce qu'on a choisi ces métriques-là ?
+Dans un premier temps nous devions récupérer un grand nombre de crashs-report.Ce que nous avons accompli avec succès.
+Mais une fois ces données récupérés nous devions en tirer des métriques intéressantes.
+Nous avons eu deux idées :
 
-dire ce qu'on aurait pu faire d'autre, ou en plus, d'autres idées que celle sur laquelle on s'est concentré : ex: quelle fonction fait le plus crasher ou bien chercher l'explosive https://wiki.mozilla.org/CrashKill/Plan/Explosive ?
+- comparer le nombre buckets disparus/apparus entre plusieurs versions pour essayer d'en tirer des généralités
+- comparer plusieurs algo de bucketing pour déterminer lequel est le plus efficace
+
+Nous avons choisi le premier car le second nous semblait difficilement réalisable dans le temps imparti (il n'en est pas moins interressant pour autant!)
 
 #### Comment avont nous récupéré les buckets
 
