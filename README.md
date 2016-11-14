@@ -16,7 +16,7 @@ Denis Hamann - Nathan Baquet
 
 ## Introduction
 Le but premier de ce projet est de développer un outil qui permet de récupérer des rapports de crash de Mozilla Firefox afin de récolter au moins 20 000 rapports sur les deux dernières version de Firefox.
-Au cours de l’avancement du projet, nous avons défini des objectifs supplémentaires. Etant donné que nous avions des données précieuses, nous avons pu en sortir des métriques. Nous nous sommes malgré tout limité à l'analyse de xxxxx Ecrire ici très brièvement ce qu'on a ciblé comme analyse.xxxxxxxxxxxxxxxxxxxxx
+Au cours de l’avancement du projet, nous avons défini des objectifs supplémentaires. Etant donné que nous avions des données précieuses, nous avons pu en sortir des métriques. Nous nous sommes malgré tout limité à l'analyse des buckets entre les différentes versions de Firefox.
 
 
 ### Contexte
@@ -26,51 +26,37 @@ L'objectif de ce projet était assez général : analyser des crashs. Seulement,
 
 ## Travail technique
 ### But
-Le travail technique n'est pas un but en lui-même, c'est plutot les résultats et l'analyse de ceux-ci qui nous intéressent ici. Le but est de collecter un maximum de données afin de pouvoir analyser celles-ci. Vu la quantité et qualité de données extraites, les possibilités d'analyse sont grandes et peuvent être faites de manières différentes et dans des buts différents. Nous nous sommes concentrés sur l'analyse de xxxxxxxxxx
+Le travail technique n'est pas un but en lui-même, c'est plutot les résultats et l'analyse de ceux-ci qui nous intéressent ici. Le but est de collecter un maximum de données afin de pouvoir analyser celles-ci. Vu la quantité et qualité de données extraites, les possibilités d'analyse sont grandes et peuvent être faites de manières différentes et dans des buts différents. Nous nous sommes concentrés sur l'analyse des ajouts et suppressions de buckets entre les différentes versions de firefox(et donc par extension des introductions et correction de bugs) 
 
 ### Technologies et langages utilisés
 
 Pour ce projet, nous avons utilisé le langage Python (https://www.python.org/), d'une part pour le script qui permet d'extraire les données et d'autre part pour le script qui permet d'analyser les données.
 
-Concerneant la répartition des fichiers :
+Concernant la répartition des fichiers :
 
 - extract_data.py : script qui permet d'extraire les rapports de bug.
 - diff_bucket_by_version.py : script qui permet d'analyser les données, comparaison et statistiques de présence de certains buckets entre deux versions
 
 ### Algorithme
 
-Le seul algorithme important de notre système à décrire est celui qui pré-sélectionne les intégrateurs par rapport aux Pull Requests qui ne sont pas encore assignées.
-
 Un algorithme important dans notre projet est celui qui permet de déterminer les changements de buckets entre deux version.
-Le principe consiste à ... xxxxxxxxxx
+Le principe consiste à parcourir toutes les signatures des crash pour deux versions , et déterminer si les signatures de l'une sont présente dans l'autre.
 
-```javascript
-//Try to determine a type for each pull request
-for pullRequest in pullRequestToAssign
-    files = http.get(pullRequest.urlFiles)
-    if (files.contains(keywordFront))
-        pullRequest.type = "Front"
-    else if (files.contains(keywordBack))
-        pullRequest.type = "Back"
-    (...)
-end for
-
-//Assign integrator
-for pullRequest in pullRequestToAssign
-    integra = integrators.compare(integra1, integra2)
-        if(integra1.type == integra2.type)
-            return min(integra1.number, integra2.number
-        if(integra1.type == pullRequest.type)
-            return integra1
-        if(integra2.type == pullRequest.type)
-            return integra2
-        return min(integra1.number, integra2.number
-    end compare
-
-    pullRequest.assigned = integra
-end for
+```python
+def determineChanges(signatures1, signatures2):
+    result = defaultdict(list)
+    for signature in signatures1:
+        if signature not in signatures2 and signature not in result['corrected']:
+            result['corrected'].append(signature)
+    for signature in signatures2:
+        if signature not in signatures1 and signature not in result['introduced'] and signature not in result['corrected']:
+            result['introduced'].append(signature)
+        elif signature not in result['remaining'] and signature not in result['introduced'] and signature not in result['corrected']:
+            result['remaining'].append(signature)
+        else :
+            result['doubles'].append(signature)
+    return result
 ```
-
 ### Utilisation
 Script d'extraction :
 - python extract_data.py
@@ -80,31 +66,44 @@ Le script peut être arrêté et repris plus tard, des informations à l'écran 
 Script d'analyse :
 - python diff_bucket_by_version.py
 
-- Le script génère deux fichiers:
-1. une page html avec un tableau graphique
+- Le script génère deux sorties:
+1. une page html avec un tableau indiquant le nombre de buckets corrigés|introduits|restants entre deux versions
 2. un rapport de comparaison pour chaque version deux par deux.
 
 ### Screenshots
 
-Voici un exemple de résultat au lancement du script d'analyse.
-![Résultat analyse](https://raw.githubusercontent.com/Oupsla/Dashboard-Pr/master/public/images/Selection.png)
+Voici un exemple de résultat au lancement du script d'analyse
+![Résultat analyse](http://nsa37.casimages.com/img/2016/11/14/161114112419160221.jpg)
 
 ## Evaluation
-
+Dans un premier temps nous devions
 parler beaucoup ici de pourquoi on a décidé d'analyser ces données-là, dans quel but, pour qui (les dév mozz) ?
 commenter ici (du mieux qu'on peut) pourquoi c'est un bon algo de bucketing et pourquoi pas la comparer avec un autre (montrer qu'on a cherché d'autres algo de bucketing).
 pourquoi est-ce qu'on a choisi ces métriques-là ?
 
 dire ce qu'on aurait pu faire d'autre, ou en plus, d'autres idées que celle sur laquelle on s'est concentré : ex: quelle fonction fait le plus crasher ou bien chercher l'explosive https://wiki.mozilla.org/CrashKill/Plan/Explosive ?
 
+#### Comment avont nous récupéré les buckets
 
-## Limitation
+Le mot clef bucket n'est jamais mentionné dans la doc mozilla.Néanmoins il existe une valeur similaire appelé signature.
 
-- vitesse (requêtes) du script d'extraction
+####Pourquoi cette signature est un bucket 
+
+Elle est utilisé par la fondation mozilla pour caractériser un crash report et trouver d'autres crashs similaires
+
+![Crash report mozilla](http://nsa37.casimages.com/img/2016/11/14/16111411384447573.jpg)
+
+####Comment a-t-on récupéré l'ensemble des signatures des crashs
+via l'api SuperSearch ; plus précisément via cette requète :
+    https://crash-stats.mozilla.com/api/SuperSearch/?product=Firefox&_facets=signature
+## Limitations
+
+- vitesse (requêtes) du script d'extraction 
 - quantité de données à extraire + analyser
-- limitation de nos comparaisons (par exemple la date, le nombre de versions, etc.)
--
-
+- Nos requètes se basent uniquement sur les crash-reports des sept derniers jours
+- Du fait de la limite précédente , il y a tès peu de crash reports sur les versions les plus anciennes -> potentiellement des buckets qui existaient mais qui ne sont pas apparus les sept derniers jours
+- Bien qu'ayant des résultats cohérents pour l'algo d'analyse dans le rapports .Les stats version par version sont étranges -> problème dans la requête?ou alors mozilla change régulièrement ses buckets
+ 
 
 ## Conclusion
 

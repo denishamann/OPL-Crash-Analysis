@@ -15,12 +15,13 @@ data = ''
 
 
 
-
+""" On extrait tous les buckets pour une version """
 def extractSignatures(version):
     # print(response.json())
     allRequests = []
     offset = 0
     rester = True
+    """ Si + de 1000 réponses , on requière les 1000 suivantes jusqu'à ce qu'il n'y en ai plus"""
     while rester:
         current_url = url + "&version=" + version+"&_results_offset=" + str(
             offset) + "&_results_number=1000"
@@ -46,7 +47,7 @@ def extractSignatures(version):
             terms.append(signature['term'])
     return terms
 
-
+""" Compare les signatures (buckets) de deux versions pour déterminer lesquels ont été corrigées|introduites|sont restées """
 def determineChanges(signatures1, signatures2):
     result = defaultdict(list)
     for signature in signatures1:
@@ -61,6 +62,7 @@ def determineChanges(signatures1, signatures2):
             result['doubles'].append(signature)
     return result
 
+""" génère un rapport a partir du résultat d'analyse de diff_between_two_versions """
 def generate_report(analyse_result):
     report_file = open(destination_directory+analyse_result['version1']+'_'+analyse_result['version2']+'_buckets_presence_comparison','w')
     report_file.write("versions : " + analyse_result['version1'] + " & " + analyse_result['version2'] + "\n\n")
@@ -88,7 +90,7 @@ def generate_report(analyse_result):
 def extract_all_versions_signatures() :
 
     for version in versions :
-        print version
+        print( version )
         versions_signatures[version] = extractSignatures(version)
 
 def diff_between_two_versions( version1 , version2):
@@ -105,7 +107,7 @@ def diff_between_two_versions( version1 , version2):
 def generate_html_array(versions_comparison_stats):
     i = 0
     html_file = open(destination_directory+'bucket_presence_stats_between_versions.html','w')
-    html_file.write('<html><title>bucket presence stats between versions</title><head><style>table{border: 3px solid black;}th,td{border: 1px solid black;}</style></head><body><table >')
+    html_file.write('<html><title>bucket presence stats between versions</title><head><style>table{border: 3px solid black;}th,td{border: 1px solid black;}</style></head><body><h2><b>buckets corrected | introduced | remaining between two versions of Firefox</b></h2><br><table >')
     html_file.write('<th> &nbsp; &nbsp; &nbsp; &nbsp;</th>');
     for version in versions :
         html_file.write('<th>'+version+'</th>')
