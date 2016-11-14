@@ -2,9 +2,6 @@
 
 OPL - Thème 2: Crash Analysis
 
-
-What is a crash? How to detect it? How to collect it? How to analyze crashes? What to put in crash report? What are the issues related to privacy and law? What is a bucket? What is a stack trace? What are the technical limitations and tradeoffs or crash analysis? Which crash to fix first?
-
 14/11/2016
 
 Denis Hamann - Nathan Baquet
@@ -94,13 +91,26 @@ Voici un exemple de résultat au lancement du script d'analyse.
 
 ## Evaluation
 
+parler beaucoup ici de pourquoi on a décidé d'analyser ces données-là, dans quel but, pour qui (les dév mozz) ?
+commenter ici (du mieux qu'on peut) pourquoi c'est un bon algo de bucketing et pourquoi pas la comparer avec un autre (montrer qu'on a cherché d'autres algo de bucketing).
+pourquoi est-ce qu'on a choisi ces métriques-là ?
+
+dire ce qu'on aurait pu faire d'autre, ou en plus, d'autres idées que celle sur laquelle on s'est concentré : ex: quelle fonction fait le plus crasher ou bien chercher l'explosive https://wiki.mozilla.org/CrashKill/Plan/Explosive ?
+
 
 ## Limitation
 
+- vitesse (requêtes) du script d'extraction
+- quantité de données à extraire + analyser
+- limitation de nos comparaisons (par exemple la date, le nombre de versions, etc.)
+-
 
 
 ## Conclusion
 
 
+dire que les objectifs de base est atteint et les objectifs secondaires qu'on a ciblés sont aussi atteint. Que ça répond à l'attente.
+
 ## Glossaire
-- Intégrateur : Personne ayant la permission de fusion sur un dépôt
+- Bucket :
+- Crawler :
