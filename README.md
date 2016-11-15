@@ -9,11 +9,11 @@ What is a crash? How to detect it? How to collect it? How to analyze crashes? Wh
 Denis Hamann - Nathan Baquet
 
 ## Table des matières
-**[Introduction](#introduction)**
-**[Travail technique](#travail-technique)**
-**[Evaluation](#evaluation)**
-**[Limitation](#limitation)**
-
+**[Introduction](#introduction)**   
+**[Travail technique](#travail-technique)**     
+**[Evaluation](#evaluation)**   
+**[Limitation](#limitation)**   
+**[Conclusion](#conclusion)**  
 
 ## Introduction
 Le but initial de ce projet est de développer un outil permettant de récupérer des rapports de crash de Mozilla Firefox afin de récolter au moins 20 000 rapports sur les deux dernières versions de Firefox.
@@ -74,6 +74,7 @@ Script d'extraction :
 ### Screenshots
 
 Voici un exemple de résultat au lancement du script d'analyse.
+
 ![Résultat analyse](http://nsa37.casimages.com/img/2016/11/14/161114112419160221.jpg)
 
 ## Evaluation
@@ -94,14 +95,17 @@ Le mot clef bucket n'est jamais mentionné dans la documentation de Mozilla. Né
 Elle est utilisée par la fondation mozilla pour caractériser un crash report et trouver d'autres crashs similaires.
 
 ![Crash report mozilla](http://nsa37.casimages.com/img/2016/11/14/16111411384447573.jpg)
+
 ####Comment a-t-on récupéré l'ensemble des signatures des crashs
 via l'api SuperSearch ; plus précisément via cette requète :
     https://crash-stats.mozilla.com/api/SuperSearch/?product=Firefox&_facets=signature
     à laquelle nous avons ajouté les arguments :
 - &version= < version voulu> 
-- &_results_offset= < offset> & _results_number=1000 pour itérer sur l'ensemble des résultats par tranche de 1000
+- &_results_offset= < offset> & _results_number=1000 pour itérer sur l'ensemble des résultats par tranche, "fenêtre" de 1000
 
 ### Ce que l'on en tire
+
+Pour l'instant, nous avons pu récuperer un grand nombre de crash reports dans des buckets. Le script peut facilement être modifié et relancé pour avoir des résultats pour d'autres versions ou d'autres dates. Ces données peuvent être utiles à tout ceux qui voudraient effectuer un traitement sur celle-ci. Nous n'avons fait aucun traitement sur ces données à ce jour.
 
 #### Le résultat Brut
 ![Résultat analyse](http://nsa37.casimages.com/img/2016/11/14/161114112419160221.jpg)
@@ -130,10 +134,14 @@ En supposant que nos résultats sont bons d'où peut venir cette régularité :
 
 ## Limitations
 
-- vitesse (requêtes) du script d'extraction 
-- quantité de données à extraire + analyser
-- Nos requètes se basent uniquement sur les crash-reports des sept derniers jours
-- Du fait de la limite précédente , il y a tès peu de crash reports sur les versions les plus anciennes -> potentiellement des buckets qui existaient mais qui ne sont pas apparus les sept derniers jours
-- Bien qu'ayant des résultats cohérents pour l'algo d'analyse dans le rapports ,Les stats version par version sont étranges -> problème dans la requête?ou alors mozilla change régulièrement ses buckets
- 
+- La vitesse du script d'extraction est limitée car nous devons faire des appels à l'API Super Search. Pour extraire environ 20 000 crash reports, cela prend environ 5 heures. 
+- La quantité des données extraites peut varier entre 2GO et 8GO. Bien-sûr, ces données peuvent être compressée pour faire entre 100MO et 300MO.
+- Pour l'instant, les données sur lesquelles nous avons travaillé (extraction et analyse) ne se basent que sur les crash-reports des sept derniers jours.
+- Du fait de la limite précédente , il y a tès peu de crash reports sur les versions les plus anciennes -> potentiellement des buckets qui existaient mais qui ne sont pas apparus les sept derniers jours.
+- Bien qu'ayant des résultats cohérents pour l'algorithme d'analyse dans le rapport, les statistiques version par version sont étranges. Nous somme pourtant pratiquement sur d'effectuer les requêtes correctement, cela pourrait donc venir du fait que mozilla change régulièrement ses buckets.
 
+## Conclusion
+
+Pour conclure, nous pouvons dire que notre Crash crawler répond aux besoins et objectifs fixés au départ. Il offre une solution efficace en ce qui concerne l'analyse des buckets entre les différentes versions de Firefox. Il pourrait cependant être intéressant d'imaginer des tas d'autres analyse de ces données.
+
+Nous pourrions facilement imaginer proposer notre outil aux développeurs de Mozilla afin qu'ils puissent se rendre compte des ajouts et suppressions des buckets entre différentes versions.
