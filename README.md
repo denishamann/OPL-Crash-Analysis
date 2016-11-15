@@ -13,8 +13,7 @@ Denis Hamann - Nathan Baquet
 **[Travail technique](#travail-technique)**
 **[Evaluation](#evaluation)**
 **[Limitation](#limitation)**
-**[Conclusion](#conclusion)**
-**[Glossaire](#glossaire)**
+
 
 ## Introduction
 Le but initial de ce projet est de développer un outil permettant de récupérer des rapports de crash de Mozilla Firefox afin de récolter au moins 20 000 rapports sur les deux dernières versions de Firefox.
@@ -95,24 +94,46 @@ Le mot clef bucket n'est jamais mentionné dans la documentation de Mozilla. Né
 Elle est utilisée par la fondation mozilla pour caractériser un crash report et trouver d'autres crashs similaires.
 
 ![Crash report mozilla](http://nsa37.casimages.com/img/2016/11/14/16111411384447573.jpg)
-
 ####Comment a-t-on récupéré l'ensemble des signatures des crashs
-Via l'api SuperSearch ; plus précisément via cette requète :
+via l'api SuperSearch ; plus précisément via cette requète :
     https://crash-stats.mozilla.com/api/SuperSearch/?product=Firefox&_facets=signature
+    à laquelle nous avons ajouté les arguments :
+- &version= < version voulu> 
+- &_results_offset= < offset> & _results_number=1000 pour itérer sur l'ensemble des résultats par tranche de 1000
+
+### Ce que l'on en tire
+
+#### Le résultat Brut
+![Résultat analyse](http://nsa37.casimages.com/img/2016/11/14/161114112419160221.jpg)
+
+Ce tableau est le résultat de notre analyse .
+
+- Il est indicé par version de firefox
+- chaque case contient 3 valeurs (dans l'ordre)
+    - le nombre de buckets ayant  disparus
+    - le nombre de buckets ayant  été introduits
+    - le nombre de buckets restants entre deux versions
+    
+Pour chaque comparaison , un fichier donnant le détail des buckets est disponible.
+
+#### Extrapolation des données
+Les résultats sont étranges.Les nombres de buckets sont très proches. 
+Cela peut être du à une erreur ,mais en reprennant les buckets un par un a la main , les résultats semblait corrects.
+En supposant que nos résultats sont bons d'où peut venir cette régularité :
+
+- changement de convention de nommage des signatures entre chaque version ? improbable bien que le champ signature soit récent ~2015 
+- Les devs mozilla sont tellement réguliers qu'ils introduisent toujours autant de bugs ? 
+
+
+
+  
+
 ## Limitations
 
-- vitesse (requêtes) du script d'extraction
+- vitesse (requêtes) du script d'extraction 
 - quantité de données à extraire + analyser
 - Nos requètes se basent uniquement sur les crash-reports des sept derniers jours
 - Du fait de la limite précédente , il y a tès peu de crash reports sur les versions les plus anciennes -> potentiellement des buckets qui existaient mais qui ne sont pas apparus les sept derniers jours
-- Bien qu'ayant des résultats cohérents pour l'algo d'analyse dans le rapports .Les stats version par version sont étranges -> problème dans la requête?ou alors mozilla change régulièrement ses buckets
+- Bien qu'ayant des résultats cohérents pour l'algo d'analyse dans le rapports ,Les stats version par version sont étranges -> problème dans la requête?ou alors mozilla change régulièrement ses buckets
+ 
 
-
-## Conclusion
-
-
-dire que les objectifs de base est atteint et les objectifs secondaires qu'on a ciblés sont aussi atteint. Que ça répond à l'attente.
-
-## Glossaire
-- Bucket :
-- Crawler :
