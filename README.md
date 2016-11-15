@@ -12,7 +12,7 @@ Denis Hamann - Nathan Baquet
 **[Introduction](#introduction)**   
 **[Travail technique](#travail-technique)**     
 **[Evaluation](#evaluation)**   
-**[Limitation](#limitation)**   
+**[Limitations](#limitations)**   
 **[Conclusion](#conclusion)**  
 
 ## Introduction
