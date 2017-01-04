@@ -12,7 +12,7 @@ versionB = "49.0.1"
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-url = 'https://crash-stats.mozilla.com/api/SuperSearch/?product=Firefox&version=' + versionA + "&version=" + versionB + '&_facets=signature'
+url = 'https://crash-stats.mozilla.com/api/SuperSearch/?product=Firefox&version=' + versionA + '&version=' + versionB + '&_facets=signature'
 data = ''
 try:
 	response = requests.get(url, data=data)
@@ -28,17 +28,17 @@ terms = []
 #création d'un dossier pour chaque signature
 for signature in signatures:
     terms.append(signature['term'])
-    directory = signature['term']
+    directory = str(terms.index(signature['term']))
     if not os.path.exists(directory):
 		os.makedirs(directory)
-#print(terms)
 print("nombre de dossiers : " + str(len(terms)))
 
-cpt = 1;
+
+#TODO: écriture du JSON metadata.json
+
 #pour chaque signature, on garde les id des crash reports à l'intérieur
 for term in terms:
-	print("Traitement du dossier : " + str(cpt))
-	cpt = cpt + 1
+	print("Traitement du dossier : " + str(terms.index(term)))
 
 	#term = 'OOM | large | NS_ABORT_OOM | nsACString_internal::Replace'
 	offset = 0
@@ -46,17 +46,14 @@ for term in terms:
 	rester = True
 
 	while rester:
-		url = "https://crash-stats.mozilla.com/api/SuperSearch/?product=Firefox&version=49.0&version=49.0.1&signature==" + term + "&_columns=uuid&_results_offset=" + str(offset) + "&_results_number=1000"
+		url = 'https://crash-stats.mozilla.com/api/SuperSearch/?product=Firefox&version=' + versionA + '&version=' + versionB + '&signature==' + term + "&_columns=uuid&_results_offset=" + str(offset) + "&_results_number=1000"
 		try:
 			response = requests.get(url, data=data)
 		except requests.exceptions.RequestException as e:
 			print e
 			sys.exit(1)
-		print(response)
 		parsed = json.loads(response.content)
 		#print(parsed)
-
-
 		if parsed['total'] > (offset + 1000):
 			offset = offset + 1000
 		else:
@@ -67,15 +64,15 @@ for term in terms:
 
 	#print(uuids)
 	tailleServ = len(uuids)
-	DIR = term
+	DIR = str(terms.index(term))
 	tailleLocal = len([name for name in os.listdir(DIR) if os.path.isfile(os.path.join(DIR, name))])
 
 	if(tailleLocal >= tailleServ):
-		print("Dossier " + term + " déja importé.")
+		print("Dossier " + str(terms.index(term)) + " déja importé.")
 		continue
 	if(tailleLocal > 0):
-		print("Dossier " + term + " partiellement importé.")
-	print("écriture dans le dossier " + term)
+		print("Dossier " + str(terms.index(term)) + " partiellement importé.")
+	print("Réécriture du dossier " + str(terms.index(term)))
 
 	compteur = 0
 	#récupération du rapport de crash
@@ -94,7 +91,7 @@ for term in terms:
 			print e
 			sys.exit(1)
 		parsed = json.loads(response.content)
-		if not os.path.exists(term + "/"+ uuid):
-			print("écriture ... : " + str(compteur) + " " + uuid)
-			with open(term + "/"+ uuid, 'w') as outfile:
+		if not os.path.exists(str(terms.index(term)) + "/"+ uuid):
+			print("écriture ... : ")
+			with open(str(terms.index(term)) + "/"+ uuid, 'w') as outfile:
 				json.dump(parsed, outfile)
